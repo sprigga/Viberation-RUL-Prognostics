@@ -1,0 +1,61 @@
+{
+  "dataset": "PHM IEEE 2012 Challenge - Learning Set",
+  "total_bearings": 6,
+  "operating_conditions": 3,
+  "bearings": [
+    {
+      "name": "Bearing1_1",
+      "condition": 1,
+      "load_N": 4000,
+      "speed_rpm": 1800,
+      "actual_RUL_min": 28020,
+      "num_files": 2803,
+      "total_duration_min": 4.67
+    },
+    {
+      "name": "Bearing1_2",
+      "condition": 1,
+      "load_N": 4200,
+      "speed_rpm": 1650,
+      "actual_RUL_min": 8700,
+      "num_files": 871,
+      "total_duration_min": 1.45
+    },
+    {
+      "name": "Bearing2_1",
+      "condition": 2,
+      "load_N": 4200,
+      "speed_rpm": 1650,
+      "actual_RUL_min": 9100,
+      "num_files": 911,
+      "total_duration_min": 1.52
+    },
+    {
+      "name": "Bearing2_2",
+      "condition": 2,
+      "load_N": 4000,
+      "speed_rpm": 1800,
+      "actual_RUL_min": 7960,
+      "num_files": 797,
+      "total_duration_min": 1.33
+    },
+    {
+      "name": "Bearing3_1",
+      "condition": 3,
+      "load_N": 5000,
+      "speed_rpm": 1500,
+      "actual_RUL_min": 5730,
+      "num_files": 515,
+      "total_duration_min": 0.86
+    },
+    {
+      "name": "Bearing3_2",
+      "condition": 3,
+      "load_N": 4200,
+      "speed_rpm": 1650,
+      "actual_RUL_min": 16430,
+      "num_files": 1637,
+      "total_duration_min": 2.73
+    }
+  ]
+}

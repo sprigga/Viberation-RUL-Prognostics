@@ -33,25 +33,45 @@ class InitParameter():
 
 
         #---測試用的資料---
-        #    inputdir = r'C:\Users\jasonchien\.spyder-py3\20181121_tsa_good.csv'  #檔案路徑，可修改。 
+        # Note: These test data files are only loaded if they exist
+        # This allows the module to work in environments without test data (e.g., Docker containers)
+        #    inputdir = r'C:\Users\jasonchien\.spyder-py3\20181121_tsa_good.csv'  #檔案路徑，可修改。
         #    inputdir2 = r'C:\Users\jasonchien\.spyder-py3\MFP45_600C_NOL_L1_M354B_accelerometer_1.csv'  #good
-        inputdir = r'C:\Users\jasonchien\.spyder-py3\20181121_tsa_defect.csv'  #檔案路徑，可修改。 
+        inputdir = r'C:\Users\jasonchien\.spyder-py3\20181121_tsa_defect.csv'  #檔案路徑，可修改。
         inputdir2 = r'C:\Users\jasonchien\.spyder-py3\MFP45_600C_59T_L1_M354B_accelerometer_1.csv'  #defect
         inputdir3 = r'C:\Users\jasonchien\.spyder-py3\Harmonic Sideband Filter for Polo_1.csv'  #檔案路徑，可修改。
         inputdir5 = r'D:\MFPDataset5\20190117_104625_ML_GAP0.1_MFP45_600C_C1_NOISE\MFP45_600C_ML_GAP0.1_M354B_accelerometer_signal_010.csv'
         inputdir6 = r'D:\MFPDataset5\20190117_104625_ML_GAP0.1_MFP45_600C_C1_NOISE\MFP45_600C_ML_GAP0.1_M354B_accelerometer_TSA_60T_010.csv'
-        
-        dataSet = pd.read_csv(inputdir,names=['Degree','Acc'])
-        dataSet2 = pd.read_csv(inputdir2,names=['time','x','y','z','label','12m','60m'])
-        dataSet3 = pd.read_csv(inputdir3,header=None)
-        self.pdata = pd.DataFrame(dataSet,columns=['Degree','Acc'])
-        self.pdata2 = pd.DataFrame(dataSet2,columns=['time','x','y','z','label','12m','60m'])
-        self.pdata3 = pd.DataFrame(dataSet3)
-        self.pdata4 = self.pdata3[0]*-1
-        
-        dataSet5 = pd.read_csv(inputdir5,names=['time','x','y','z','label','12m','60m'])
-        self.pdata5 = pd.DataFrame(dataSet5,columns=['time','x','y','z','label','12m','60m'])
-        
-        dataSet6 = pd.read_csv(inputdir6,names=['Degree','x','y','z'])
-        self.pdata6 = pd.DataFrame(dataSet6,columns=['Degree','x','y','z'])
+
+        # Initialize test data attributes as None (will be loaded only if files exist)
+        self.pdata = None
+        self.pdata2 = None
+        self.pdata3 = None
+        self.pdata4 = None
+        self.pdata5 = None
+        self.pdata6 = None
+
+        # Try to load test data files if they exist (for legacy batch processing)
+        import os
+        try:
+            if os.path.exists(inputdir):
+                dataSet = pd.read_csv(inputdir,names=['Degree','Acc'])
+                self.pdata = pd.DataFrame(dataSet,columns=['Degree','Acc'])
+            if os.path.exists(inputdir2):
+                dataSet2 = pd.read_csv(inputdir2,names=['time','x','y','z','label','12m','60m'])
+                self.pdata2 = pd.DataFrame(dataSet2,columns=['time','x','y','z','label','12m','60m'])
+            if os.path.exists(inputdir3):
+                dataSet3 = pd.read_csv(inputdir3,header=None)
+                self.pdata3 = pd.DataFrame(dataSet3)
+                self.pdata4 = self.pdata3[0]*-1
+            if os.path.exists(inputdir5):
+                dataSet5 = pd.read_csv(inputdir5,names=['time','x','y','z','label','12m','60m'])
+                self.pdata5 = pd.DataFrame(dataSet5,columns=['time','x','y','z','label','12m','60m'])
+            if os.path.exists(inputdir6):
+                dataSet6 = pd.read_csv(inputdir6,names=['Degree','x','y','z'])
+                self.pdata6 = pd.DataFrame(dataSet6,columns=['Degree','x','y','z'])
+        except Exception as e:
+            # Silently skip test data loading if files are not accessible
+            # This allows the module to work in Docker containers and web environments
+            pass
         #----------------
