@@ -1,36 +1,37 @@
-# Vibration Analysis System for PHM (Prognostics and Health Management)
+# 🔧 Vibration Signal Analysis System
 
-A comprehensive web-based application for vibration signal analysis and bearing health monitoring, specifically designed for the IEEE PHM 2012 Data Challenge and industrial prognostics applications.
+Modern web application integrating Vue 3 frontend with FastAPI backend, designed for vibration signal analysis and fault diagnosis in rotating machinery. The system integrates IEEE PHM 2012 dataset for bearing health monitoring research.
 
 ## 🎯 Project Overview
 
 This system provides an integrated platform for:
-- **Vibration Signal Processing**: Advanced feature extraction from time, frequency, and wavelet domains
-- **PHM Database Management**: Complete integration with IEEE PHM 2012 bearing dataset
-- **Real-time Health Monitoring**: Dashboard for equipment health visualization and trending
-- **Remaining Useful Life (RUL) Prediction**: Machine learning-based prognostics capabilities
-- **Web-based Interface**: Modern Vue.js frontend with interactive charts and analysis tools
+- **Vibration Signal Analysis**: Advanced signal processing for rotating machinery
+- **Advanced Signal Processing**: Time, frequency, and time-frequency domain feature extraction
+- **PHM Database Integration**: Complete IEEE PHM 2012 bearing dataset analysis capabilities
+- **Real-time Health Monitoring**: Interactive dashboard with live analysis and visualization
+- **Predictive Maintenance**: Health assessment and remaining useful life (RUL) prediction
+- **Modern Web Interface**: Vue 3 + Element Plus frontend with ECharts visualization
 
 ## 🏗️ System Architecture
 
 ### Backend (FastAPI + Python)
-- **API Server**: `backend/main.py` - RESTful API with FastAPI framework
-- **Signal Processing**: Legacy analysis modules for comprehensive feature extraction
-- **Database**: SQLAlchemy ORM with SQLite for data persistence
-- **PHM Integration**: Specialized processors for IEEE PHM 2012 dataset
+- **API Server**: `backend/main.py` - Comprehensive RESTful API (1300+ lines)
+- **Signal Processing Modules**: Integrated time domain, frequency domain, and envelope analysis
+- **Database Layer**: SQLite databases for PHM data and temperature monitoring
+- **Advanced Algorithms**: Hilbert transform, STFT, CWT, and filter-based features
 
-### Frontend (Vue.js + Element Plus)
-- **Dashboard**: Real-time health monitoring and statistics
-- **PHM Database**: Browse and analyze IEEE PHM 2012 training data
+### Frontend (Vue 3 + Element Plus)
+- **Dashboard**: IEEE PHM 2012 experiment overview and real-time time-domain analysis
+- **PHM Database**: Complete bearing dataset browser with statistical analysis
+- **Algorithms**: Interactive algorithm demonstration and parameter tuning
 - **Analysis Tools**: Interactive vibration analysis and RUL prediction
-- **Frequency Calculator**: Specialized tools for bearing frequency analysis
 
 ### Core Analysis Modules
 - `timedomain.py`: Time domain features (RMS, kurtosis, crest factor, etc.)
 - `frequencydomain.py`: FFT analysis and spectral features
-- `waveletprocess.py`: Wavelet transforms (STFT, CWT, NP4)
-- `filterprocess.py`: Advanced filtering and higher-order statistics
-- `hilbertransfer.py`: Hilbert transform and envelope analysis
+- `timefrequency.py`: Time-frequency analysis (STFT, CWT, spectrogram)
+- `filterprocess.py`: Advanced filtering and higher-order statistics (NA4, FM4, M6A, M8A, ER)
+- `hilberttransform.py`: Hilbert transform and envelope analysis
 - `harmonic_sildband_table.py`: Harmonic and sideband energy analysis
 
 ## 🚀 Quick Start
@@ -47,14 +48,15 @@ cd vibration_signals
 ```
 
 ### 2. Start Backend
+The main backend application is `backend/main.py`.
+
 ```bash
 # Using UV (recommended)
-uv run python run_backend.py
+uv run uvicorn backend.main:app --host 0.0.0.0 --port 8081 --reload
 
 # Or using traditional Python
 pip install -r backend/requirements.txt
-cd backend
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn backend.main:app --host 0.0.0.0 --port 8081 --reload
 ```
 
 ### 3. Start Frontend
@@ -67,7 +69,7 @@ npm run dev
 ### 4. Access Application
 Open your browser and navigate to: `http://localhost:5173`
 
-The backend API will be running on: `http://localhost:8000`
+The backend API will be running on: `http://localhost:8081`
 
 ## 🐳 Docker Deployment
 
@@ -78,6 +80,10 @@ docker-compose up --build
 
 # Run in background
 docker-compose up -d
+```
+For development, you can use `docker-compose.dev.yml`:
+```bash
+docker-compose -f docker-compose.dev.yml up --build
 ```
 
 ### Individual Services
@@ -112,21 +118,39 @@ docker-compose up frontend
 
 ## 🔧 API Endpoints
 
-### Health Monitoring
-- `GET /` - System health check
-- `GET /api/results` - Get analysis results
-- `GET /api/health-trend/{guide_id}` - Get health trend data
+### System Health
+- `GET /` - System health check and API information
 
-### PHM Database
+### PHM Database Integration
 - `GET /api/phm/training-summary` - PHM training data summary
-- `GET /api/phm/analysis-data` - PHM analysis results
-- `POST /api/phm/analyze` - Analyze uploaded bearing data
+- `GET /api/phm/analysis-data` - PHM analysis results from preprocessed data
+- `GET /api/phm/database/bearings` - List all bearings in PHM database
+- `GET /api/phm/database/bearing/{bearing_name}` - Get specific bearing information
+- `GET /api/phm/database/bearing/{bearing_name}/files` - Get bearing file list (paginated)
+- `GET /api/phm/database/bearing/{bearing_name}/measurements` - Get bearing measurements
+- `GET /api/phm/database/bearing/{bearing_name}/file/{file_number}/data` - Get complete data for a specific file
+- `GET /api/phm/database/bearing/{bearing_name}/statistics` - Get bearing statistics
+- `GET /api/phm/database/bearing/{bearing_name}/anomalies` - Search for anomalous vibration data
 - `POST /api/phm/predict-rul` - Predict remaining useful life
 
-### Analysis
-- `POST /api/analyze` - Perform vibration analysis
-- `GET /api/guide-specs` - Get linear guide specifications
-- `POST /api/guide-specs` - Create new guide specification
+### Algorithm Analysis Endpoints
+- `GET /api/algorithms/time-domain/{bearing_name}/{file_number}` - Time domain features
+- `GET /api/algorithms/time-domain-trend/{bearing_name}` - Time domain trend analysis
+- `GET /api/algorithms/frequency-domain/{bearing_name}/{file_number}` - Frequency domain analysis
+- `GET /api/algorithms/frequency-fft/{bearing_name}/{file_number}` - Low-frequency FFT features
+- `GET /api/algorithms/frequency-tsa/{bearing_name}/{file_number}` - TSA high-frequency FFT
+- `GET /api/algorithms/envelope/{bearing_name}/{file_number}` - Envelope spectrum analysis
+- `GET /api/algorithms/hilbert/{bearing_name}/{file_number}` - Hilbert transform features
+- `GET /api/algorithms/filter-features/{bearing_name}/{file_number}` - Advanced filter features (NA4, FM4, M6A, M8A, ER)
+- `GET /api/algorithms/filter-trend/{bearing_name}` - Filter features trend analysis
+- `GET /api/algorithms/higher-order/{bearing_name}/{file_number}` - Higher-order statistics
+
+### Time-Frequency Analysis
+- `GET /api/algorithms/stft/{bearing_name}/{file_number}` - Short-Time Fourier Transform
+- `GET /api/algorithms/cwt/{bearing_name}/{file_number}` - Continuous Wavelet Transform
+- `GET /api/algorithms/spectrogram/{bearing_name}/{file_number}` - Spectrogram analysis
+
+
 
 ## 📁 Project Structure
 
@@ -209,21 +233,135 @@ python scripts/query_phm_data.py
 ## 🛠️ Configuration
 
 ### Environment Variables
-```bash
-DATABASE_URL=sqlite:///./vibration_analysis.db
-VITE_API_URL=http://localhost:8000
-```
+The application is configured using environment variables. See `docker-compose.yml` for examples.
+
+- `DATABASE_URL`: Path to the main SQLite database.
+- `PHM_DATABASE_PATH`: Path to the PHM data SQLite database.
+- `PHM_TEMPERATURE_DATABASE_PATH`: Path to the PHM temperature data SQLite database.
+- `VITE_API_URL`: The URL of the backend API for the frontend to connect to.
+
+Default values are set in the `docker-compose.yml` and `backend/config.py`.
 
 ### Backend Configuration
 See `backend/CONFIG_README.md` for detailed configuration options.
 
-## 📚 Documentation
+## 📚 Algorithm Documentation
 
-- [Quick Start Guide](docs/QUICKSTART.md)
-- [PHM Integration Details](docs/PHM_INTEGRATION_README.md)
-- [Project Summary](docs/PROJECT_SUMMARY.md)
-- [Training Data Analysis](docs/TRAINING_DATA_ANALYSIS_REPORT.md)
-- [Testing Guidelines](docs/TESTING.md)
+### Time Domain Analysis
+Time domain features are directly extracted from the raw vibration signal without conversion to other domains. These features provide overall health assessment:
+
+- **Peak**: Maximum amplitude value in the signal
+- **RMS (Root Mean Square)**: Represents the overall vibration energy
+- **Kurtosis**: Measures the peakedness of the signal distribution
+- **Crest Factor**: Ratio of peak value to RMS value
+- **Average**: Mean value of the signal
+
+### Frequency Domain Analysis
+Frequency domain analysis transforms the time-domain signal into frequency components using FFT:
+
+- **Low-Frequency FM0**: Normalized peak value in low-frequency range
+- **High-Frequency FM0**: Normalized peak value in high-frequency range (using TSA)
+- **TSA (Time Synchronous Averaging)**: Averages signal over synchronous periods to improve signal-to-noise ratio
+
+### Time-Frequency Analysis
+Time-frequency analysis provides joint time-frequency representation:
+
+- **STFT (Short-Time Fourier Transform)**: Localized frequency analysis in time windows
+- **CWT (Continuous Wavelet Transform)**: Multi-scale analysis using wavelet functions
+- **Spectrogram**: Time-frequency energy distribution
+- **NP4**: Normalized fourth-order moment of time-frequency coefficients
+
+### Envelope Analysis & Hilbert Transform
+Envelope analysis extracts amplitude modulation information:
+
+- **Hilbert Transform**: Computes analytical signal to extract envelope and instantaneous frequency
+- **Envelope Spectrum**: FFT of the envelope signal, useful for detecting periodic impulses
+- **NB4**: Normalized bispectrum fourth-order statistic
+- **ER (Energy Ratio)**: Ratio of specific frequency band energy to total energy
+
+### Advanced Filter Features
+Higher-order statistics for early fault detection:
+
+- **NA4**: Normalized fourth-order moment with segment-based normalization
+- **FM4**: Fourth-order moment statistic
+- **M6A**: Sixth-order moment statistic
+- **M8A**: Eighth-order moment statistic
+- **ER**: Energy ratio between filtered and original signals
+
+## 📊 System Architecture Diagrams
+
+### UML Class Diagram
+```
++----------------------------------------+
+|              VibrationSystem           |
++----------------------------------------+
+| - timedomain: TimeDomain               |
+| - frequencydomain: FrequencyDomain     |
+| - filterprocess: FilterProcess         |
+| - hilberttransform: HilbertTransform   |
++----------------------------------------+
+| + analyze_vibration()                  |
+| + extract_time_features()              |
+| + extract_frequency_features()         |
+| + extract_envelope_features()          |
+| + calculate_advanced_stats()           |
++----------------------------------------+
+
++------------------+       +------------------------+
+|   TimeDomain     |       |   FrequencyDomain      |
++------------------+       +------------------------+
+| - peak()         |       | - fft_process()        |
+| - avg()          |       | - ifft_process()       |
+| - rms()          |       | - fft_fm0_si()         |
+| - cf()           |       | - tsa_fft_fm0_slf()    |
+| - kurt()         |       +------------------------+
+| - eo()           |
++------------------+
+
++------------------+       +------------------------+
+| FilterProcess    |       |   HilbertTransform     |
++------------------+       +------------------------+
+| - NA4()          |       | - calculate_nb4()      |
+| - NA4S()         |       | - hilbert_transform()  |
+| - FM4()          |       | - analyze_signal()     |
+| - M6A()          |       +------------------------+
+| - M8A()          |
+| - ER()           |
+| - FilterHarmonic()|
+| - FilterSideband()|
++------------------+
+```
+
+### UML Sequence Diagram
+```
+User -> Frontend: Select Bearing & File
+Frontend -> Backend: API Request for Analysis
+Backend -> Database: Query Vibration Data
+Database -> Backend: Return Data
+Backend -> TimeDomain: Calculate Time Features
+TimeDomain -> Backend: Return Time Results
+Backend -> FrequencyDomain: Calculate Frequency Features
+FrequencyDomain -> Backend: Return Frequency Results
+Backend -> FilterProcess: Calculate Advanced Features
+FilterProcess -> Backend: Return Advanced Results
+Backend -> Frontend: Return Analysis Results
+Frontend -> User: Display Analysis Results
+```
+
+### Data Flow Diagram
+```
++----------------+     +----------------+     +----------------+
+| Vibration Data |---->| Preprocessing  |---->| Feature        |
+| (Accel. H/V)   |     | (Filtering,    |     | Extraction     |
++----------------+     | Detrending)    |     | Algorithms     |
+                       +----------------+     +----------------+
+                                                      |
+                                                      v
+                        +----------------+    +------------------+
+                        | Visualization  |<---| Trend Analysis   |
+                        | & Dashboard    |    | & RUL Prediction |
+                        +----------------+    +------------------+
+```
 
 ## 🤝 Contributing
 
@@ -239,21 +377,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 👥 Authors
 
-- **Lin Hung Chuan** - Original analysis modules and algorithm development
-- **Development Team** - System integration and web application
+- Lin Hung Chuan
+- Development Team
 
 ## 🙏 Acknowledgments
 
 - IEEE PHM Society for the 2012 Data Challenge dataset
 - FEMTO-ST Institute for the PRONOSTIA experimental platform
 - Industrial partners for real-world validation datasets
-
-## 📞 Support
-
-For questions and support:
-- Create an issue in the repository
-- Check the documentation in the `docs/` directory
-- Review existing discussions and solutions
 
 ---
 
