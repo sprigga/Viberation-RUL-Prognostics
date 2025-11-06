@@ -73,6 +73,9 @@ phm-ieee-2012-data-challenge-dataset/
 *.h5
 *.hdf5
 
+# Documentation
+docs/
+
 # Docker
 .dockerignore
 docker-compose.override.yml
